@@ -1,0 +1,186 @@
+---
+layout: chapter
+title: Introducing the complete ctrl model
+description: "The full ctrl model"
+---
+
+## Modelling Language understanding as Bayesian inference
+
+The following section contains a formal description of the dRSA model. All speaker functions, and model predictions for the experimental domain, are implemented as WebPPL programs. 
+
+## Discourse
+
+
+
+~~~
+//fold
+
+var rooms = [ 
+              { zone: 1, 
+                name: "bedroom", 
+                light: "light",
+                air: "HVAC",
+                device: "lamp" 
+                },
+              { zone: 2, 
+                name: "living_room", 
+                light: "light",
+                air: "HVAC",
+                device: "lamp" 
+                },  
+              { zone: 2, 
+                name: "kitchen", 
+                light: "light"
+                air: "HVAC"
+                device: "lamp"
+                }, 
+              { zone: 3, 
+                name: "bathroom", 
+                light: "light"
+                air: Null
+                device: "lamp"
+                } 
+            ]
+
+~~~
+
+//fold
+
+
+
+
+
+
+## Speaker models
+
+There are two main differences between baselines RSA and `ctrl`:
+
+- discourse update
+- the incusion of priors that capture envrionmetnal conditions, like weather, ambient light, etc.
+
+In all other ways, `ctrl` is identical, but it is worthwhile exploring how the model processes inputs, since there are subtle differences. Like RSA, `ctrl` begins with $$L_0$$, the **literal listener**, receiving a message $$m$$ as input, however, because $$m$$ can consist of more than one word, we denote it as, $$x_{1:N} = x_1,...,x_n$$. This is the most notable divergence between the two models. In order to process more than one utterance at a time, we replace the **interpretation function** $I$ in RSA, with the **Iterated interpretation function** $$I^* $$, which uses Kleene star notation to denote that it processes one or more utterances.
+
+
+$$
+P_{L}(r \mid \mathbf{u}, t, \theta) \propto P_{S_1}(\mathbf{u} \mid r, t, \theta) P(r).
+$$
+
+Here, $t$ denotes a value related to time of day, and $$\theta$$ is a contextully determined free parameter representing a feature, this could be the ambient light levels detected by a sensor, or ambient temperature. More concretely, in the case of a temperature request like "it's cold in here" we are interested in infering
+
+<!---
+At a high level, our model attempts to infer the optimal control scheme for running services within a building. From a candidate set of control schemes, the optimal choice is the one that maximises a utility function $U$. The utility function can capture various aspects of occupant utility. For instance, this could be maximizing the physical comfort of occupants, or environmental goals that chooses devices and actuations that minimizing energy consumption. This could also be a combination of the two. This allows us to consider alternative models of interaction, including whimsical system behavior, where the building can use hyperbole, sarcasm, oportunism, rudeness, politeness, Assertiveness (say, if a person is not the owner)
+--->
+
+
+
+The dRSA model begins with a literal listener $$L_0$$ that receives a dialog $$x_{1:N}$$ as input. The purpose of $$L_0$$ is to determine the informativity of $$x_{1:N}$$, in proportion to its literal semantic truth values.
+
+
+~~~
+// prior over world states
+var objectPrior = function() {
+  var obj = uniformDraw(objects);
+  return obj
+}
+
+// meaning function to interpret the utterances
+var meaning = function(utterance, obj){
+  var y = filter(function(x) { return _.includes( utterance, x ) }, Object.values(obj));
+  var size = Object.keys(utterance).length == Object.keys(y).length;
+  return size
+}
+~~~
+
+You should play around with different outputs, including more than one utterance at a time dont forget to wrap in `[]` and `""`
+
+
+Taken together, we can then implement this as a generator function, given as follows:
+
+$$
+P_{L_0}(r \mid \mathbf{u}, t, w) \propto c \bigcap_{i=1}\mathcal{I}(x_i)^N_{i=1} \cdot P(r)
+$$
+
+$$c(m)_{i=1}^N = c \bigwedge_{i=1} I^* (m_{i})^N_{i=1}$$
+
+$$
+c(m) = c \bigwedge I^* (m) = c(m_1) \wedge c(m_2) ... c(m_n)
+$$.
+
+~~~
+// literal listener
+var literalListener = function(utterance){
+  Infer({model: function(){
+    var obj = objectPrior();
+    var uttTruthVal = meaning(utterance, obj);
+    condition(uttTruthVal == true)
+    return obj
+  }})
+}
+
+~~~
+
+
+
+$P(r)$ is a uniform Bayesian prior on all referents in $\mathcal{W}$. Multiplying the prior by the iterated semantic update function enumerates the truth conditions of every symbol in the input sequence, and yields a discrete uniform distribution over referents. [^ordering]
+
+[^ordering]: It is worthwhile noting that the model will produce identical results regardless of whether each element in the input string is processed independently, or simultaneously, since $$P(x_1)\cdot P(x_2\mid x_1)\cdot...\cdot P(x_n\mid x_{1:x_n-1}) = P(x_{1:N})$$, which is equal to $$\prod^{N}_{i=1} P(x_i \mid x_{1:i-1})$$. 
+
+At a high level, $$L_0$$ recursively conditions the truth value of the $$i^{th}$$ utterance in $$x_{1:N}$$ on all past utterances. Next in the pipeline is the **dialogic speaker** $$S_1$$. Recall that at the beginning of each game, an idealized speaker is assigned a referent $$r \in \mathcal{W}$$ and is assumed to have produced the input dialog. Since we do not know *a priori* which referent they were assigned, we use the $$S_1$$ function to simulate the generative process that they used to produce the input dialog. The $$S_1$$ function uses a discrete uniform prior distribution over possible contexts (the subset of robots consistent with the input dialog). Recall that this is generated by $$L_0$$. The likelihood function, $$P(x_{1:N})$$ is used to recursively enumerate all semantically well formed dialogs that refer to the candidate set of referents. The inclusion of the full joint distribution $$x_{1:N}$$ is where the speaker model in dRSA diverges from the baseline RSA model.
+
+$$
+  P_{S_1}(x_{1:N} \mid r) \propto 
+  P_{L_0}(r \mid x_{1:N})^\alpha \cdot P(\mathbf{u}) \cdot P(t) \cdot P(w) 
+$$
+
+~~~
+// set speaker optimality
+var alpha = 1
+
+// pragmatic speaker
+var speaker = function(obj){
+  Infer({model: function(){
+    var utterance = uniformDraw(utterances)
+    factor(alpha * literalListener(utterance).score(obj))
+    return utterance
+  }})
+}
+~~~
+
+
+> **Exercise** The standard RSA cost function can be replaced in a number of ways. For instance, it can be made to maximise energy savings for devices. Change the above code to minimize the number of devices turned on for a given command.
+
+
+The $$S_1$$ function uses a softmax function that is identical to the one found in the baseline RSA model (cf. chapter 2). This has the effect of suppressing dialog strings that deviate from a one to one mapping of the compatible referents generated by $$L_0$$. An equivalent formalism, following the baseline RSA model, is the utility theoretic interpretation, which defines a utility function $$\mathbf{U}$$, that measures the reduction in entropy that an utterance provides to the recursively lower listeners' interpretation.
+
+$$
+P_{S_1}(x_{1:N} \mid r) \propto 
+\exp(\alpha \cdot \mathbf{U}_{{S_1}}(\mathbf{u}; r_{i}; t; w)
+$$
+
+$$
+\mathbf{U}_{S_1}(x_{1:N};r) = \log(P_{L_0}(r \mid x_{1:N}))
+$$
+
+Finally, we have the {\bf dialogic listener} function, $$L_1$$, given in the equation below. The dialogic listener multiplies a uniform prior on referents by the distribution over utterances generated by $$S_1$$, conditioning the probability of a compatible referent on new evidence generated by $$S_1$$.
+
+$$
+  P_{L_1}(r \mid x_{1:N}) \propto P_{S_1}(x_{1:N} \mid r) P(r)
+$$
+
+~~~
+// pragmatic listener
+var pragmaticListener = function(utterance){
+  Infer({model: function(){
+    var obj = objectPrior()
+    observe(speaker(obj),utterance)
+    return obj
+  }})
+}
+~~~
+
+
+
+
+
+### Footnotes
+

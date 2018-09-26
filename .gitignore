@@ -1,0 +1,8 @@
+_site
+.sass-cache
+.jekyll-metadata
+_corn
+_prod
+.DS_Store
+node_modules
+package-lock.json
