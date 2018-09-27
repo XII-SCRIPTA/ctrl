@@ -1,6 +1,6 @@
 # Interpretting Non-Literal Language Use in the Built Environment
 
-## Kenneth Nichols
+## Author: XII-SCRIPTORUM
 
 ### Supplementary material for the thesis *A Bit cold, Isn't it? Interpretting Non-Literal Language Use in the Built Environment With Bayesian Theory of Mind*  
 
