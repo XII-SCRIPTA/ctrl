@@ -1,8 +1,8 @@
 # Site settings
 title: Interpretting Non-Literal Language Use in the Built Environment
-baseurl: ""
-url: "http://xii-scripta.github.io/ctrl"
-remote_theme: XII-SCRIPTA/ctrl 
+baseurl: "/ctrl"
+url: "http://XII-SCRIPTA.github.io/ctrl"
+#remote_theme: XII-SCRIPTA/ctrl 
 
 # Build settings
 markdown: kramdown
