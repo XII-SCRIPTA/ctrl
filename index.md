@@ -10,7 +10,7 @@ custom_css:
 <div id="header">
   <h1 id='title'>Interpretting Non-Literal Language Use in the Built Environment</h1>
   <hr class='edition' />
-  <span class="authors">Kenneth Nichols</span>
+  <span class="authors">XII-SCRIPTORUM</span>
 </div>
 
 <br />
@@ -22,14 +22,14 @@ Voice and text based interaction have become the de facto standard for controlli
 
 
 <h3>Accompanying Thesis</h3>
-K. Nichols (2018). <i>A Bit cold, Isn't it? Interpretting Non-Literal Language Use in the Built Environment With Bayesian Theory of Mind</i>. Masters thesis, Australian National University <a id="toggle-bibtex" href="#">[bibtex]</a>
+XII-SCRIPTORUM (2018). <i>A Bit cold, Isn't it? Interpretting Non-Literal Language Use in the Built Environment With Bayesian Theory of Mind</i>. xxxx, xxxx <a id="toggle-bibtex" href="#">[bibtex]</a>
 
 <pre id="bibtex">
-@mastersthesis{Nichols:18,
+@mastersthesis{XII-SCRIPTORUM:18,
 abstract = {},
-author = {Kenneth Nichols},
+author = {XII-SCRIPTORUM},
 month = {october},
-school = {Australian National University},
+school = {xxxx},
 title = {% raw %}{{A Bit cold, Isn't it? Interpretting Non-Literal Language Use in the Built Environment With Bayesian Theory of Mind.}}{% endraw %},
 year = {2018}
 }
@@ -37,7 +37,7 @@ year = {2018}
 
 <h3>Local Installation Instructions</h3>
 
-<p> All instructions are for Mac OS (or OSX) version <code>10.13.6</code> onwards. WebPPL is hosted locally using the <a href="https://nodejs.org/en/"> node.js</a>) runtime environment. The <b>node package manager</b> (npm) repository is used to download and install WebPPL. Running <code>npm install -g webppl</code> in a terminal installs the latest version of WebPPL from npm. Once installed, the webppl program <code>foo</code> can be run globally in the terminal using the <code>webppl</code> prefix, i.e. <code>webppl foo.webppl</code> </p>
+<p> All instructions are for Mac OS version <code>10.13.6</code> onwards. WebPPL is hosted locally using the <a href="https://nodejs.org/en/"> node.js</a>) runtime environment. The <b>node package manager</b> (npm) repository is used to download and install WebPPL. Running <code>npm install -g webppl</code> in a terminal installs the latest version of WebPPL from npm. Once installed, the webppl program <code>foo</code> can be run globally in the terminal using the <code>webppl</code> prefix, i.e. <code>webppl foo.webppl</code> </p>
 
 <p>A number of WebPPL specific packages and external javascript libraries are required for running the code locally. In the root or home directory (<code>cd ~</code>), create a new folder (<code>mkdir .webppl</code>). From here, install the <b>webppl-viz</b> library using the following command: <code>npm install probmods/webppl-viz</code>. </p>
 
