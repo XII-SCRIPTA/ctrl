@@ -1,7 +1,7 @@
 ---
 layout: chapter
-title: Introducing the complete ctrl model
-description: "The full ctrl model"
+title: Introducing the <code>ctrl</code> model
+description: "Extending the baseline RSA model to built environments."
 ---
 
 ## Modelling Language understanding as Bayesian inference
