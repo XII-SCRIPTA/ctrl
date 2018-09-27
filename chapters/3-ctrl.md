@@ -12,9 +12,11 @@ The following section contains a formal description of the dRSA model. All speak
 
 
 
-~~~
-//fold
+~~~ norun
+///fold:
 
+
+///
 var rooms = [ 
               { zone: 1, 
                 name: "bedroom", 
@@ -22,6 +24,7 @@ var rooms = [
                 air: "HVAC",
                 device: "lamp" 
                 },
+
               { zone: 2, 
                 name: "living_room", 
                 light: "light",
@@ -43,10 +46,6 @@ var rooms = [
             ]
 
 ~~~
-
-//fold
-
-
 
 
 

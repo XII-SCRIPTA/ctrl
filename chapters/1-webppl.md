@@ -11,10 +11,6 @@ description: "A tutorial introduction to probabilistic programming in WebPPL."
 
 This chapter introduces **WebPPL** ("web people"), a **probabilistic programming language** (PPL). All models and experiments in this thesis are implementated in WebPPL, so it is important to understand how the language works at a basic level. Broadly construed, probabilistic programming languages are tools for statistical modelling and analysis refp:Ghahramani:2015, refp:Tolpin-etal:2018. In their simplest form they are a deterministic programming language augmented to include conditioning and random sampling operators refp: Goodman:2013, refp:goodman-stuhlmuller-dippl:2014, refp:Rainforth:2017. In the case of WebPPL, the deterministic language is a purely functional subset of Javscript.
 
-## Javascript Data Structures
-
-the `object` structure = `[]`
-
 ## Building Probabilistic Models
 
 "Run this program a few times. You will get back a different sample on each execution. Also, notice the parentheses after `flip`. These are meaningful; they tell WebPPL that you are calling the flip function—resulting in a sample. Without parentheses flip is a function object—a representation of the simulator itself, which can be used to get samples."
@@ -150,67 +146,8 @@ WebPPL implementations provide a number of benefits over other machine learning 
 
 
 
-
-
-
-
-
-
-
-
-
 ## WebPPL: a purely functional subset of Javascript
 
-WebPPL includes a subset of Javascript, and follows the syntax of Javascript for this subset.
-
-This example program uses most of the Javascript syntax that is available in WebPPL:
-
-~~~~
-// Define a function using two external primitives:
-// 1. Javascript's `JSON.stringify` for converting to strings
-// 2. Underscore's _.isFinite for checking if a value is a finite number
-var coerceToPositiveNumber = function(x) {
-  if (_.isFinite(x) && x > 0) {
-    return x;
-  } else {
-    print('- Input ' + JSON.stringify(x) +
-          ' was not a positive number, returning 1 instead');
-    return 1;
-  }
-};
-
-// Create an array with numbers, an object, an a Boolean
-var inputs = [2, 3.5, -1, { key: 1 }, true];
-
-// Map the function over the array
-print('Processing elements in array ' + JSON.stringify(inputs) + '...');
-var result = map(coerceToPositiveNumber, inputs);
-print('Result: ' + JSON.stringify(result));
-~~~~
-
-Language features with side effects are not allowed in WebPPL. The code that has been commented out uses assignment to update a table. This produces an error in WebPPL.
-
-~~~~
-// Don't do this:
-
-// var table = {};
-// table.key = 1;
-// table.key = table.key + 1;
-// => Syntax error: You tried to assign to a field of table, but you can
-//                  only assign to fields of globalStore
-
-
-// Instead do this:
-
-var table = { key: 1 };
-var tableTwo = { key: table.key + 1 };
-print(tableTwo);
-
-// Or use the library function `extend`:
-
-var tableThree = extend(tableTwo, { key: 3 })
-print(tableThree);
-~~~~
 
 There are no `for` or `while` loops. Instead, use higher-order functions like WebPPL's built-in `map`, `filter` and `zip`:
 
@@ -230,87 +167,7 @@ map(print, xs);
 "Done!"
 ~~~~
 
-It is possible to use normal Javascript functions (which make *internal* use of side effects) in WebPPL. See the [online book](http://dippl.org/chapters/02-webppl.html) on the implementation of WebPPL for details (section "Using Javascript Libraries").
 
-
-## WebPPL stochastic primitives
-
-### Sampling from random variables
-
-WebPPL has a large [library](http://docs.webppl.org/en/master/distributions.html) of primitive probability distributions. Try clicking "Run" repeatedly to get different i.i.d. random samples:
-
-~~~~
-print('Fair coins (Bernoulli distribution):');
-print([flip(0.5), flip(0.5), flip(0.5)]);
-
-print('Biased coins (Bernoulli distribution):');
-print([flip(0.9), flip(0.9), flip(0.9)]);
-
-var coinWithSide = function(){
-  return categorical([.45, .45, .1], ['heads', 'tails', 'side']);
-};
-
-print('Coins that can land on their edge:')
-print(repeat(5, coinWithSide)); // draw 5 i.i.d samples
-~~~~
-
-There are also continuous random variables:
-
-~~~~
-print('Two samples from standard Gaussian in 1D: ');
-print([gaussian(0, 1), gaussian(0, 1)]);
-
-print('A single sample from a 2D Gaussian: ');
-print(multivariateGaussian(Vector([0, 0]), Matrix([[1, 0], [0, 10]])));
-~~~~
-
-You can write your own functions to sample from more complex distributions. This example uses recursion to define a sampler for the Geometric distribution:
-
-~~~~
-var geometric = function(p) {
-  return flip(p) ? 1 + geometric(p) : 1
-};
-
-geometric(0.8);
-~~~~
-
-What makes WebPPL different from conventional programming languages is its ability to perform *inference* operations using these primitive probability distributions. Distribution objects in WebPPL have two key features:
-
-1. You can draw *random i.i.d. samples* from a distribution using the special function `sample`. That is, you sample $$x \sim P$$ where $$P(x)$$ is the distribution.
-
-2. You can compute the probability (or density) the distribution assigns to a value. That is, to compute $$\log(P(x))$$, you use `dist.score(x)`, where `dist` is the distribution in WebPPL.
-
-The functions above that generate random samples are defined in the WebPPL library in terms of primitive distributions (e.g. `Bernoulli` for `flip` and `Gaussian` for `gaussian`) and the built-in function `sample`:
-
-~~~~
-var flip = function(p) {
-  var p = (p !== undefined) ? p : 0.5;
-  return sample(Bernoulli({ p }));
-};
-
-var gaussian = function(mu, sigma) {
-  return sample(Gaussian({ mu, sigma }));
-};
-
-[flip(), gaussian(1, 1)];
-~~~~
-
-To create a new distribution, we pass a (potentially stochastic) function with no arguments---a *thunk*---to the function `Infer` that performs *marginalization*. For example, we can use `flip` as an ingredient to construct a Binomial distribution using enumeration:
-
-~~~~
-var binomial = function() {
-  var a = flip(0.5);
-  var b = flip(0.5);
-  var c = flip(0.5);
-  return a + b + c;
-};
-
-var MyBinomial = Infer({ model: binomial });
-
-[sample(MyBinomial), sample(MyBinomial), sample(MyBinomial)];
-~~~~
-
-`Infer` is the *inference operator* that computes (or estimates) the marginal probability of each possible output of the function `binomial`. If no explicit inference method is specified, `Infer` defaults to enumerating each possible value of each random variable in the function body.
 
 ### Bayesian inference by conditioning
 
@@ -344,6 +201,8 @@ print('\Probability of first coin being Heads (given at least two Heads): ');
 print(Math.exp(moreThanTwoHeads.score(true)));
 ~~~~
 
+
+
 ### Codeboxes and Plotting
 
 The codeboxes allow you to modify our examples and to write your own WebPPL code. Code is not shared between boxes. You can use the special function `viz` to plot distributions:
@@ -358,32 +217,6 @@ var appleOrangeDist = Infer({
 viz(appleOrangeDist);
 ~~~~
 
-~~~~
-var fruitTasteDist = Infer({
-  model() {
-    return {
-      fruit: categorical([0.3, 0.3, 0.4], ['apple', 'banana', 'orange']),
-      tasty: flip(0.7)
-    };
-  }
-});
-
-viz(fruitTasteDist);
-~~~~
-
-~~~~
-var positionDist = Infer({
-  model() {
-    return {
-      X: gaussian(0, 1),
-      Y: gaussian(0, 1)};
-  },
-  method: 'forward',
-  samples: 1000
-});
-
-viz(positionDist);
-~~~~
 
 ### Next
 

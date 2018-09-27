@@ -24,21 +24,22 @@
 hr.edition {
     padding: 0;
     border: none;
-    border-top: medium double #92E1AC;
+    border-top: medium double black;
     color: white;
     text-align: center;
     width: 650px;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    opacity: .5;
 }
 hr.edition:after {
-    content: "Software Artifact for THES";
+    content: "Software Artifact";
     display: inline-block;
     position: relative;
+    border-radius: 25px;
     top: -0.8em;
     padding: 0 1em;
-    background: #4ECC77;
-    opacity: 1.0;
+    background: black;
 }
 
 .ampersand {
