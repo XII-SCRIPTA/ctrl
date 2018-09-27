@@ -1,6 +1,6 @@
 # Site settings
 title: Interpretting Non-Literal Language Use in the Built Environment
-baseurl: "/ctrl"
+baseurl: ""
 url: "http://XII-SCRIPTA.github.io/ctrl"
 remote_theme: XII-SCRIPTA/ctrl 
 
