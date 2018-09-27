@@ -219,5 +219,3 @@ viz(appleOrangeDist);
 
 
 ### Next
-
-In the [next chapter](/chapters/3-agents-as-programs.html), we will implement rational decision-making using inference functions.
