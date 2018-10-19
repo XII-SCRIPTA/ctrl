@@ -10,7 +10,35 @@ The following section contains a formal description of the dRSA model. All speak
 
 ## Discourse
 
+~~~ norun
+///fold:
 
+
+L1
+
+
+///
+
+Input:
+____________________
+user: guest
+temp: 20c
+condition: x >= 20
+condition: guest
+devices: Light, HVAC
+____________________
+output: 
+
+~~~
+
+
+
+The Reality Editor aims to enable a richer interaction with physical things and more freedom in how we communicate our ideas of use to these things.
+
+
+HCI justification
+
+Once an essential solution has been designed, it must be realized as a useable software and hardware demonstration. Since this thesis describes human-computer interactions, and HCI is strongly dependent on the user experience and user understanding, only a fully functional demonstration of the system can provide proof of its usability. Software and hardware must tell the full story of the interaction, to test the solution and find new ideas that may improve it. Therefore, a major part of this thesis is the development of a fully functional, decentralized operating system for connected objects, and a user interface that allows the user to curate the connections among objects, similar to the way a conductor would conduct an orchestra.
 
 ~~~ norun
 ///fold:
