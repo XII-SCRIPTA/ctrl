@@ -7,11 +7,10 @@ description: "An introduction to language understanding as Bayesian inference"
 ### Modelling Language understanding as Bayesian inference
 
 
-Success in our day to day lives depends on our ability to explain the behavior of other agent's behavior in terms of their likely mental states. If I wink, will they know I was being ironic? or, if I take the last cookie, will they think I'm greedy?  Philosophers and psychologists call this process of mentalizing \textbf{theory of mind}. On this view, the mind is a tool of undertaking mental simulations of the thoughts, motivations, and actions of others. This process can also be inverted, allowing us to to reason backwards from observations of others' actions, using this as evidence for reconstructing the likely thoughts and motivations that led to their behavior. This allows us to see others as rational actors, where actions are not merely motions, but rather, a consequence of larger plans that satisfy desires. On this view, humans are (approximately) rational planners, who use goals as the basis for carrying out plans. 
+Success in our day to day lives depends on our ability to explain the behavior of other agent's behavior in terms of their likely mental states. If I wink, will they know I was being ironic? or, if I take the last cookie, will they think I'm greedy?  Philosophers and psychologists call this process of mentalizing **theory of mind**. On this view, the mind is a tool of undertaking mental simulations of the thoughts, motivations, and actions of others. This process can also be inverted, allowing us to to reason backwards from observations of others' actions, using this as evidence for reconstructing the likely thoughts and motivations that led to their behavior. This allows us to see others as rational actors, where actions are not merely motions, but rather, a consequence of larger plans that satisfy desires. On this view, humans are (approximately) rational planners, who use goals as the basis for carrying out plans. 
 
 <img src="../assets/img/ToM.png" alt="Fig. 1: Graphical representation of the Bayesian RSA model." style="width: 400px;"/>
 <center>Fig. 1: Bayesian RSA schema.</center>
-
 
 
 <!-- <center>The literal listener: P<sub>L<sub>0</sub></sub>(s|u) ∝ ⟦u⟧(s) · P(s)</center> -->

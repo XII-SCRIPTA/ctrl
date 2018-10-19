@@ -16,10 +16,6 @@ custom_css:
 <br />
 Voice and text based interaction have become the de facto standard for controlling internet connected appliances and devices in domestic settings Despite their popularity, these systems are subject to a number of limitations, most notably, their inability to interpret the subtleties of meaning in everyday language use. This thesis aims to advance the current understanding of how utterances are interpreted in the context of built environmets, especially as they relate to vague and ambiguous commands. In particular, we argue that in order to make progress in this domain, it is necessary to develop a common framework for knitting together two core components of pragmatic language understanding: <b>contextual information</b>, and <b>intutitive models</b> of how agents plan and carry out goals in environments. We demonstrate how these components can be used to audit the behavior of the system, enabling it to give reasoned explanations for why it behaved the way it did.
 
-<img src="../assets/img/ToM.png" alt="Fig. 1: Graphical representation of the Bayesian RSA model." style="width: 400px;"/>
-<center>Fig. 1: Change to wiring diagram.</center>
-
-
 <div id='left'>
 
 <h3>Accompanying Thesis</h3>
