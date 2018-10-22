@@ -6,84 +6,9 @@ description: "Extending the baseline RSA model to built environments."
 
 ## Modelling Language understanding as Bayesian inference
 
-The following section contains a formal description of the dRSA model. All speaker functions, and model predictions for the experimental domain, are implemented as WebPPL programs. 
-
-## Discourse
-
-~~~ norun
-///fold:
-
-
-L1
-
-
-///
-
-Input:
-____________________
-user: guest
-temp: 20c
-condition: x >= 20
-condition: guest
-devices: Light, HVAC
-____________________
-output: 
-
-~~~
-
-
-
-The Reality Editor aims to enable a richer interaction with physical things and more freedom in how we communicate our ideas of use to these things.
-
-
-HCI justification
-
-Once an essential solution has been designed, it must be realized as a useable software and hardware demonstration. Since this thesis describes human-computer interactions, and HCI is strongly dependent on the user experience and user understanding, only a fully functional demonstration of the system can provide proof of its usability. Software and hardware must tell the full story of the interaction, to test the solution and find new ideas that may improve it. Therefore, a major part of this thesis is the development of a fully functional, decentralized operating system for connected objects, and a user interface that allows the user to curate the connections among objects, similar to the way a conductor would conduct an orchestra.
-
-~~~ norun
-///fold:
-
-
-///
-var rooms = [ 
-              { zone: 1, 
-                name: "bedroom", 
-                light: "light",
-                air: "HVAC",
-                device: "lamp" 
-                },
-
-              { zone: 2, 
-                name: "living_room", 
-                light: "light",
-                air: "HVAC",
-                device: "lamp" 
-                },  
-              { zone: 2, 
-                name: "kitchen", 
-                light: "light"
-                air: "HVAC"
-                device: "lamp"
-                }, 
-              { zone: 3, 
-                name: "bathroom", 
-                light: "light"
-                air: Null
-                device: "lamp"
-                } 
-            ]
-
-~~~
-
-
-
-
-## Speaker models
-
 There are two main differences between baselines RSA and `ctrl`:
 
 - discourse update
-- the incusion of priors that capture envrionmetnal conditions, like weather, ambient light, etc.
 
 In all other ways, `ctrl` is identical, but it is worthwhile exploring how the model processes inputs, since there are subtle differences. Like RSA, `ctrl` begins with $$L_0$$, the **literal listener**, receiving a message $$m$$ as input, however, because $$m$$ can consist of more than one word, we denote it as, $$x_{1:N} = x_1,...,x_n$$. This is the most notable divergence between the two models. In order to process more than one utterance at a time, we replace the **interpretation function** $I$ in RSA, with the **Iterated interpretation function** $$I^* $$, which uses Kleene star notation to denote that it processes one or more utterances.
 
