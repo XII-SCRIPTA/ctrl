@@ -73,18 +73,3 @@ print('\Probability of first coin being Heads (given at least two Heads): ');
 print(Math.exp(moreThanTwoHeads.score(true)));
 ~~~~
 
-### Codeboxes and Plotting
-
-The codeboxes allow you to modify our examples and to write your own WebPPL code. Code is not shared between boxes. You can use the special function `viz` to plot distributions:
-
-~~~~
-var appleOrangeDist = Infer({
-  model() {
-    return flip(0.9) ? 'apple' : 'orange';
-  }
-});
-
-viz(appleOrangeDist);
-~~~~
-
-
