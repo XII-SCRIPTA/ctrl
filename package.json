@@ -1,22 +1,11 @@
 {
   "name": "probmods",
   "version": "3.0.0",
-  "homepage": "https://github.com/probmods/chapter",
-  "authors": [
-    "Noah Goodman <ngoodman@stanford.edu>",
-    "Josh Tenenbaum <jbt@mit.edu>"
-  ],
+  "homepage": "https://github.com/XII-SCRIPTA/ctrl.",
+  "authors": "XII-SCRIPTA",
   "main": "index.md",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/probmods/probmods2.git"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/probmods/probmods2/issues"
   },
   "keywords": [],
   "dependencies": {
