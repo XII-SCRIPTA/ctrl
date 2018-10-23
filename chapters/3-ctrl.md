@@ -4,29 +4,26 @@ title: Introducing the <code>ctrl</code> model
 description: "Extending the baseline RSA model to built environments."
 ---
 
-## Modelling Language understanding as Bayesian inference
 
-There are two main differences between baselines RSA and `ctrl`:
+There main difference between baseline RSA and `ctrl` is the addition of a **discourse update** function, in all other ways, `ctrl` is identical. However, it is worthwhile exploring how the model processes inputs, since there are subtle differences. Like RSA, `ctrl` begins with $$L_0$$, the **literal listener**, receiving an utterance $$u$$ as input. Because $$u$$ can consist of more than one word, we denote it as, $$u_{1:N} = u_1,...,u_N$$. This is the most notable divergence between the two models. In order to process more than one utterance at a time, we replace the **interpretation function** $I$ in RSA, with the **Iterated interpretation function** $$I^* $$, which uses Kleene star notation to denote that it processes one or more utterances.
 
-- discourse update
 
-In all other ways, `ctrl` is identical, but it is worthwhile exploring how the model processes inputs, since there are subtle differences. Like RSA, `ctrl` begins with $$L_0$$, the **literal listener**, receiving a message $$m$$ as input, however, because $$m$$ can consist of more than one word, we denote it as, $$x_{1:N} = x_1,...,x_n$$. This is the most notable divergence between the two models. In order to process more than one utterance at a time, we replace the **interpretation function** $I$ in RSA, with the **Iterated interpretation function** $$I^* $$, which uses Kleene star notation to denote that it processes one or more utterances.
+%$$
+%P_{S_1}(\text{utt} \mid \text{device}, t, l) \propto 
+%P_{L_1}(\text{device} \mid \text{utt}, t, l)^\alpha \cdot P(\text{utt}) \cdot 
+%P(t) \cdot P(w) 
+%$$
 
+
+If we wanted to include contextual information, we could do so in the following way. 1. $$t$$ denotes a value related to time of day, and $$\theta$$ is a contextully determined free parameter representing a feature, this could be the ambient light levels detected by a sensor, or ambient temperature. More concretely, in the case of a temperature request like "it's cold in here" we are interested in infering
 
 $$
 P_{L}(r \mid \mathbf{u}, t, \theta) \propto P_{S_1}(\mathbf{u} \mid r, t, \theta) P(r).
 $$
 
-Here, $t$ denotes a value related to time of day, and $$\theta$$ is a contextully determined free parameter representing a feature, this could be the ambient light levels detected by a sensor, or ambient temperature. More concretely, in the case of a temperature request like "it's cold in here" we are interested in infering
-
 <!---
 At a high level, our model attempts to infer the optimal control scheme for running services within a building. From a candidate set of control schemes, the optimal choice is the one that maximises a utility function $U$. The utility function can capture various aspects of occupant utility. For instance, this could be maximizing the physical comfort of occupants, or environmental goals that chooses devices and actuations that minimizing energy consumption. This could also be a combination of the two. This allows us to consider alternative models of interaction, including whimsical system behavior, where the building can use hyperbole, sarcasm, oportunism, rudeness, politeness, Assertiveness (say, if a person is not the owner)
 --->
-
-
-
-The dRSA model begins with a literal listener $$L_0$$ that receives a dialog $$x_{1:N}$$ as input. The purpose of $$L_0$$ is to determine the informativity of $$x_{1:N}$$, in proportion to its literal semantic truth values.
-
 
 ~~~
 // prior over world states
@@ -84,7 +81,7 @@ $$
   P_{L_0}(r \mid x_{1:N})^\alpha \cdot P(\mathbf{u}) \cdot P(t) \cdot P(w) 
 $$
 
-~~~
+~~~norun
 // set speaker optimality
 var alpha = 1
 
@@ -134,5 +131,93 @@ var pragmaticListener = function(utterance){
 
 
 
-### Footnotes
+## Footnotes
+
+~~~
+
+// set of states (here: objects of reference)
+// we represent objects as JavaScript objects to demarcate them from utterances
+// internally we treat objects as strings nonetheless
+var objects = [ 
+                { 
+                  color: "blue", 
+                  shape: "square", 
+                  string: "blue square"
+                },
+                { 
+                  color: "blue", 
+                  shape: "circle", 
+                  string: "blue circle"
+                },
+                { 
+                  color: "green", 
+                  shape: "square", 
+                  string: "green square"
+                } 
+              ]
+
+// set of utterances
+//var utts = ["blue", "green", "square", "circle"]
+//var utterances = powerset(utts).slice(1, powerset(utts).length)
+var utterances = [["blue"], ["green"], ["square"], ["circle"],
+                  ["blue","square"],["blue","circle"],["green","square"]]
+
+
+// prior over world states
+var objectPrior = function() {
+  var obj = uniformDraw(objects);
+  return obj
+}
+
+// meaning function to interpret the utterances
+var meaning = function(utterance, obj){
+  var y = filter(function(x) { return _.includes( utterance, x ) }, Object.values(obj));
+  var size = Object.keys(utterance).length == Object.keys(y).length;
+  return size
+}
+
+// literal listener
+var literalListener = function(utterance){
+  Infer({model: function(){
+    var obj = objectPrior();
+    var uttTruthVal = meaning(utterance, obj);
+    condition(uttTruthVal == true)
+    return obj
+  }})
+}
+
+var utterance = ["blue","square"]
+
+viz.table(literalListener(utterance))
+
+/////////////////////////////////////////////////////////////////////////
+
+// set speaker optimality
+var alpha = 1
+
+// pragmatic speaker
+var speaker = function(obj){
+  Infer({model: function(){
+    var utterance = uniformDraw(utterances)
+    factor(alpha * literalListener(utterance).score(obj))
+    return utterance
+  }})
+}
+
+
+// pragmatic listener
+var pragmaticListener = function(utterance){
+  Infer({model: function(){
+    var obj = objectPrior()
+    observe(speaker(obj),utterance)
+    return obj
+  }})
+}
+
+
+
+//viz.table(pragmaticListener(utterance))
+viz.hist(speaker(objects[0]))
+~~~
+
 
