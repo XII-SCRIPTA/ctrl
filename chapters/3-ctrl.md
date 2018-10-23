@@ -27,7 +27,7 @@ In WebPPL code, this function can be represented in the following way:
 At a high level, our model attempts to infer the optimal control scheme for running services within a building. From a candidate set of control schemes, the optimal choice is the one that maximises a utility function $U$. The utility function can capture various aspects of occupant utility. For instance, this could be maximizing the physical comfort of occupants, or environmental goals that chooses devices and actuations that minimizing energy consumption. This could also be a combination of the two. This allows us to consider alternative models of interaction, including whimsical system behavior, where the building can use hyperbole, sarcasm, oportunism, rudeness, politeness, Assertiveness (say, if a person is not the owner)
 --->
 
-~~~
+~~~norun
 // prior over world states
 var objectPrior = function() {
   var obj = uniformDraw(objects);
